@@ -97,10 +97,11 @@ select * from Vacuna;
 
 describe Cliente;
 insert into Cliente values(12345, 'Nombre 1', 'Apellido 1','Direccion 1',78945, 3);
+insert into Cliente values(1522, 'Nombre 2', 'Apellido 2','Direccion 2',5829, 2);
 select * from Cliente;
 
 describe Producto;
-insert into Producto values(1,'Producto 1','Marca 1',123,12345,13), (2,'Producto 2','Marca 2',190,12345,5);
+insert into Producto values(1,'Producto 1','Marca 1',123,12345,13), (2,'Producto 2','Marca 2',190,1522,5);
 select * from Producto;
 
 describe detalleVacuna;
