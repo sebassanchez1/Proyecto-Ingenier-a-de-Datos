@@ -1,7 +1,7 @@
 -- 1 Crear base de datos
 
-CREATE DATABASE Mascotas;
-USE Mascotas;
+CREATE DATABASE Mascotas1;
+USE Mascotas1;
 -- 2 Crear tablas
 -- Tabla Cliente
 CREATE TABLE Cliente (
@@ -82,7 +82,7 @@ CHANGE COLUMN cantidad cantidadMascota INT(10);
 -- 6 cambiar de mascota_vacuna a DETALLE VACUNA
 ALTER TABLE mascota_vacuna
 RENAME detalleVacuna;
-use Mascotas;
+use Mascotas1;
 select * from Mascota;
 select * from Producto;
 select * from Vacuna;
@@ -91,12 +91,31 @@ describe Mascota;
 describe Producto;
 describe Vacuna;
 describe Cliente;
-insert into Mascota values('','Rusth','M',1);
-insert into Mascota values(2,'Negra','F',1),(3,'Milo','M',1);
-insert into Producto values(1,'shampoo','pets',15000,6658),(2,'Comida','hills',35000,52354);
+insert into Mascota values(1,'Rusth','M','Criollo',1);
+insert into Mascota values(2,'Negra','F','Pitbull',1),(3,'Milo','Persa','M',1);
+insert into Producto values(1,'shampoo','pets',15000,658,2),(2,'Comida','hills',35000,569,1);
 insert into Vacuna values(1,'tetano',5,'tetano');
 insert into Vacuna values(2,'pulgas',15,'pulgas');
-insert into Cliente values(658,'Daniel','Duque','calle76',845231,6),(569,'Juan','Garcia','calle85',849683,7);
+insert into Cliente values(658,'Daniel','Duque','calle76',845231,1),(569,'Juan','Garcia','calle85',849683,2);
+select nombreMascota,razaMascota from Mascota;
+select cedulaCliente AS 'documento',direccionCliente AS 'Dirección' from Cliente;
+select dosisVacuna AS 'miligramos(mg)', CodigoVacuna AS 'referencia' from Vacuna;
+select codigoProducto AS 'referencia', precio AS 'cuesta:' from Producto;
+select cedulaCliente AS 'Documento', idMascotaFK AS 'codigo mascota' from Cliente order by nombreCliente asc;
+select nombreProducto AS 'producto', marca from Producto order by precio asc;
+select nombreProducto from Producto where precio = 15000;
+select nombreProducto from Producto where precio < 20000;
+select nombreProducto from Producto where precio > 20000;
+select nombreProducto from Producto where precio != 20000;
+describe detalleVacuna;
+select enfermedad from detalleVacuna where CodigoVacunaFK < 100000000000;
 
-
-
+select nombreMascota from Mascota where generoMascota = 'F' and idMascota >= 1;
+select razaMascota from Mascota where idMascota >= 2 and cantidadMascota = 1; 
+describe Vacuna;
+select * from Vacuna;
+select nombreVacuna from Vacuna where dosisVacuna >= 10 and CodigoVacuna > 1; 
+select enfermedad from Vacuna where nombreVacuna = 'tetano' and dosisVacuna = 5; 
+select * from Cliente;
+select nombreCliente from Cliente where idMascotaFK = 2 or telefono = 849683; 
+select telefono from Cliente where idMascotaFK = 1 or nombreCliente = 'Daniel'; 
