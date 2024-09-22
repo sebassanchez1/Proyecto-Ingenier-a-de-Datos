@@ -139,4 +139,9 @@ select nombreProducto from Producto where marca Like '%C';
 
 -- Tarea hacer dos busquedad de tipo like y Not like  en cada una de las tablas que tenemos , quiero consultar (campos Not Like ) 
 -- el lunes de ve update y quiz , funciones agregadas 
-
+SELECT nombreProducto FROM Producto WHERE marca LIKE 'M%';
+SELECT nombreProducto FROM Producto WHERE marca NOT LIKE '%C%';
+SELECT nombreCliente, apellidoCliente FROM Cliente WHERE apellidoCliente LIKE 'A%';
+SELECT nombreCliente FROM Cliente WHERE nombreCliente NOT LIKE '%e';
+SELECT nombreMascota FROM Mascota WHERE nombreMascota LIKE 'M%';
+SELECT nombreMascota, razaMascota FROM Mascota WHERE razaMascota NOT LIKE '%Criollo%';
