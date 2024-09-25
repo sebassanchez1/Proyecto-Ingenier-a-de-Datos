@@ -1,65 +1,102 @@
--- crear BD tiendaOnline
-create database tiendaOnline;
--- habilitar la BD
-use tiendaOnline;
--- crear tablas producto (id,autoincrement,CB), usuarios, clientes (autoincrement) y ventas (id,autincrement,#orden)
-create table cliente(
-idCliente int(17) auto_increment primary key,
-nombreCliente varchar(17),
-apellidoCliente varchar(17),
+-- 1
+CREATE DATABASE TiendaOnline;
+-- 2
+use TiendaOnline;
+
+-- 3
+CREATE TABLE Producto(
+codigoBarras INT(15) auto_increment PRIMARY KEY,
+nombreProducto VARCHAR(15),
+precioProducto INT(11)
+);
+
+CREATE TABLE Usuario(
+idUsuario INT(11) PRIMARY KEY,
+nombreUsuario VARCHAR(15),
+emailUsuario VARCHAR(15),
+rol VARCHAR(15),
+telefonoUsuario INT(11)
+);
+
+CREATE TABLE Cliente(
+idCliente INT(11) auto_increment PRIMARY KEY,
+nombreCliente VARCHAR(15),
 fechaNacimiento date
 );
-create table Producto(
-idProducto int auto_increment unique,
-nombreProducto varchar(17),
-codigoBarras varchar(20) primary key,
-precio int(20),
-idClienteFK int(20)
-);
-create table venta(
-idVenta int auto_increment unique,
-numeroVenta varchar(17) primary key,
-idClienteFK int(20),
-idUsuarioFK int(20),
-fechaVenta date
-);
-create table usuario(
-idUsuario int(17) auto_increment primary key,
-rolUsuario varchar(20)
+
+CREATE TABLE Ventas(
+idVentas INT(11) auto_increment PRIMARY KEY,
+fechaVenta VARCHAR(15),
+idClienteFK INT(11),
+idUsuarioFK INT(11)
 );
 
-create table venta_producto(
-codigoBarrasFK int(20),
-numeroVentaFK int(17),
-cantidad int(25),
-total int(20)
+CREATE TABLE Ventas_Producto(
+idProductoFK INT(11),
+idVentaFK INT(11),
+cantidad INT(11)
 );
--- realizar relaciones 1. un cliente pude realizar muchas ordenes(ventas) 2.un usuario puede generar muchas ordenes 3.un cliente puede generar muchos productos
 
-alter table Venta
-add constraint FKcliente_ventas
+alter table Ventas
+add constraint FKClienteVenta
 foreign key (idClienteFK)
 references Cliente(idCliente);
 
-alter table venta
-add constraint FKusuario_venta
+alter table Ventas
+add constraint FKUsuarioVenta
 foreign key (idUsuarioFK)
 references Usuario(idUsuario);
 
-alter table Producto
-add constraint FKcliente_productos
-foreign key (idClienteFK)
-references cliente(idCliente);
-
-alter table venta_producto
-add constraint FKorden_productos
-foreign key (codigoBarrasFK)
+alter table Ventas_Producto
+add constraint FKVentas_Producto_Producto
+foreign key (idProductoFK)
 references Producto(codigoBarras);
 
-alter table venta_producto
-add constraint FKproducto_ordenes
-foreign key (codigoBarrasFK)
-references venta_producto(cantidad);
+alter table Ventas_Producto
+add constraint FKVentas_Producto_Venta
+foreign key (idVentaFK)
+references Ventas(idVentas);
+ 
+describe Cliente;
+insert into Cliente values(1,'Santiago', '2015-12-10'),(2,'Daniel', '2008-07-07'), (3,'Laura', '2013-12-01'), (4,'David', '2005-02-05');
+select * from Cliente;
 
+describe Usuario;
+insert into Usuario values(1,'Santiago', 'Santiago@dd.com','Empleado',1234),(2,'Daniela', 'Daniela@dd.com','Empleado',12345), (3,'Loren', 'Loren@dd.com','Provedor',12346), (4,'Devid', 'Devid@dd.com','Provedor',12347);
+select * from Usuario;
 
--- promedio de ventas, suma total de ventas, cantidad de clientes, venta mas economica realizada
+describe Ventas;
+insert into Ventas values(1,'03', 4,2),(2,'05', 4,3), (3,'07', 3,1), (4,'03', 2,3);
+select * from Ventas;
+
+describe Producto;
+insert into Producto values(12,'Limpiador', 42),(13,'CPU', 43), (14,'Celular', 31), (15,'Reloj', 23);
+select * from Producto;
+
+describe Ventas_Producto;
+insert into Ventas_Producto values(12,3,2),(13,2, 3), (14,1, 1), (15,2, 3);
+select * from Ventas_Producto;
+
+select * from Producto;
+select * from Producto ORDER BY precioProducto ASC;
+select * from Cliente where fechaNacimiento like '%01';
+select * from Usuario where rol = 'Empleado';
+select * from Ventas where fechaVenta between '03' and '04';
+select * from Producto where nombreProducto like '%r%';
+select * from Ventas;
+select avg(idVentas) from Ventas;
+select suma(idVentas) from Ventas;
+
+use tiendaOnline;
+select * from Ventas inner join Cliente on Ventas.idClienteFK = Cliente.idCliente;
+-- consultar datos cliente de la maxima venta hecha
+select Cliente.nombreCliente, Ventas.idClienteFK, Ventas_Producto.Cantidad from Cliente, Ventas, Ventas_Producto
+inner join Cliente on Cliente.idCliente = Ventas.idClienteFK
+inner join Ventas_Producto on Ventas.idVentas = Ventas_Producto.idProductoFK;
+-- consultar usuario y cliente de una venta especifica
+-- consultar los productos que compró un cliente especifico
+-- consultar todos los clientes que han hecho ventas
+describe Ventas_Producto;
+select * from Ventas;
+select * from Cliente;
+select * from Ventas_Producto;
