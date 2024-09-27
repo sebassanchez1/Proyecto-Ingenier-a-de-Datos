@@ -51,14 +51,14 @@ create table Venta(
 idVentas int(15) auto_increment primary key not null, 
 numeroVenta int(15) not null,
 idUsuarioFK int(15) not null,
-idClienteFK int(15) not null,
-total int(15),
-cantidadVenta int(15) not null
+idClienteFK int(15) not null
 );
 
 create table detalleVenta(
 idProductoFK int(15) not null,
-numeroVentaFK int(15) not null
+numeroVentaFK int(15) not null,
+total int(15),
+cantidadVenta int(15) not null
 );
 
 alter table Venta
@@ -82,45 +82,69 @@ foreign key (numeroVentaFK)
 references Venta(idVentas);
 
 describe Producto;
-insert into Producto values('', 'fff1', 'ruedas', 30000), ('', 'fff2', 'sillon', 13000), ('', 'fff3', 'computador', 11000), ('', 'fff4', 'mouse', 2000);
+insert into producto values ('', '7501031311309', 'coca cola', 20000), ('', '7501234613540', 'pepsi', 18000), ('', '7501020345008', 'agua', 31000), ('', '7503021335402', 'jugo del valle', 25000);
 
 describe Usuario;
-insert into Usuario values('', 'Marco', 'Jefe'), ('', 'Sofia','Gerente'), ('', 'Antonio', 'Empleado'), ('', 'Estella', 'Empleado');
+insert into usuario values ('', 'Carlos', 'Administrador'), ('', 'Lucia', 'Empleado'), ('', 'Fernando', 'Empleado'), ('', 'Daniela', 'Empleado');
 
 describe Cliente;  
-insert into Cliente values('', 'Maria', 'Junio'), ('', 'Jose', 'Enero'), ('', 'Santiago', 'Enero'), ('', 'Tomas', 'Octubre');
+insert into cliente values ('', 'Juan', 'Enero'), ('', 'Ana', 'Febrero'), ('', 'Pedro', 'Marzo'), ('', 'Laura', 'Enero');
 select* from Cliente;
 
 describe Venta;
-insert into Venta values('',1,1,2, '',6);
-insert into Venta values('',2, 3, 1, '', 10), ('',3, 1, 4, '', 8), ('', 4, 2, 3, '', 3);
-select* from cliente;
-describe venta;
+insert into venta values ('', 1001, 1, 1), ('', 1002, 2, 2), ('', 1003, 3, 3), ('', 1004, 4, 4);
 
 describe detalleVenta;
 select* from detalleVenta;
 select* from Producto;
 select* from Venta;
-insert into detalleVenta values(1,4), (2,3), (1,4), (4,2);
+-- Inserciones corregidas para detalleVenta
+insert into detalleVenta values (1, 1, 40000, 2),(2, 2, 36000, 2), (3, 3, 62000, 2), (4, 4, 50000, 2);
 
-
-select* from Producto;
-select* from Producto order by precioProducto asc;
-select* from Cliente where mesNacimiento = 'Enero';
-select* from Usuario where rolUsuario = 'empleado';
-select* from Venta where numeroVenta between 1 and 4;
-select* from Producto where codigoBarras like '%r%';
-select* from Venta where total in (select p.precioProducto from Producto p where p.precioProducto between 9000 AND 31000);
-select avg(total) as promedio_venta from Venta;
-select count(*) as total_ventas, SUM(cantidadVenta) as total_elementos_vendidos, MIN(total) as venta_mas_economica from Venta;
-
-select * from Venta inner join Cliente on venta.idClienteFK = Cliente.idCliente;
+select * from producto;
+select * from producto order by precioproducto asc;
+select * from cliente where mesnacimiento = 'Enero';
+select * from usuario where rolusuario = 'Empleado';
+select * from venta where numeroventa between 1001 and 1004;
+select * from producto where codigobarras like '%r%';
+select v.*  from venta v join detalleVenta dv on v.idVentas = dv.numeroVentaFK join producto p on dv.idProductoFK = p.idProducto where p.precioProducto between 9000 and 31000;
+select avg(total) as promedio_venta from detalleVenta;
+select count(*) as total_ventas, sum(cantidadventa) as total_elementos_vendidos, min(total) as venta_mas_economica from detalleVenta;
+select * from venta inner join cliente on venta.idclientefk = cliente.idcliente;
 
 /* consultar el cliente de la maxima venta hecha 
 consultar usuario y cliente de una venta específica
 consultar los productos que compro un cliente en especifico
 consultar todos los clientes que han hecho ventas 
 */
+
+select c.nombreCliente, MAX(dv.total) as max_venta  from Venta v inner join Cliente c on v.idClienteFK = c.idCliente 
+inner join detalleVenta dv on v.idVentas = dv.numeroVentaFK group by c.nombreCliente  order by max_venta desc limit 1;
+
+select v.numeroVenta, u.nombreUsuario, c.nombreCliente from Venta v inner join Usuario u on v.idUsuarioFK = u.idUsuario 
+inner join Cliente c on v.idClienteFK = c.idCliente where v.numeroVenta = 2;
+
+select p.nombreProducto from detalleVenta dv inner join Producto p on dv.idProductoFK = p.idProducto 
+inner join Venta v on dv.numeroVentaFK = v.idVentas inner join Cliente c on v.idClienteFK = c.idCliente 
+where c.nombreCliente = 'Juan'; 
+
+select distinct c.nombreCliente from Venta v inner join Cliente c on v.idClienteFK = c.idCliente;
+
+describe CLiente;
+insert into Cliente values('', 'Tatiana', 'Enero');
+select * from Cliente;
+
+describe Usuario;
+insert into Usuario values('', 'Sebastian', 'Empleado');
+select * from Usuario;
+
+describe Producto;
+insert into Producto values('', '750123461324', 'Pañales', 24000);
+select * from Producto;
+
+
+
+
 
 
 
