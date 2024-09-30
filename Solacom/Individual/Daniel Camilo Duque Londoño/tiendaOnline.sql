@@ -136,3 +136,30 @@ update ventas set numeroOrden = 20240927 where idClienteFK = 5;
 insert into Cliente values(55163118, 'Tatiana','1985-11-24','Cabrera Vargas');
 update Ventas set idClienteFK = 55163118 where idClienteFK = 5;
 delete from Cliente where idCliente = 5;
+
+use tiendaOnline;
+describe Cliente;
+describe Producto;
+DELIMITER //
+CREATE PROCEDURE registrarProducto(codigoBarras int, nombreProducto varchar(15),precioProducto float)
+BEGIN
+insert into Producto values(codigoBarras,nombreProducto,precioProducto);
+END//
+DELIMITER ;
+DELIMITER //
+CREATE PROCEDURE updateProducto(codigo_Barras int, nombre_Producto varchar(15),precio_Producto float)
+BEGIN
+update Producto set codigoBarras = codigo_barras where nombre_Producto = nombre_Producto or set nombreProducto = nombre_producto where codigo_Barras = codigo_Barras or set precioProducto = precio_Producto where  ;
+END//
+DELIMITER ;
+call registrarProducto(52635,'Cable de carga',55.000);
+call updateProducto(52635,'Cargador',55.000);
+DROP procedure registrar_Clientes;
+Drop procedure updateProducto;
+
+CREATE VIEW ConsultarCliente as select nombreCliente from Cliente;
+
+select * from consultarCliente;
+
+-- crear tres procedimientos para inactivar un cliente, consultar los productos que ha comprado un cliente, modificar la fecha de nacimiento de un cliente
+-- crear dos vistas que consulte que cliente compró un producto y cual fue su número de orden, una vista que muestre el cliente que mas compras haya hecho 
