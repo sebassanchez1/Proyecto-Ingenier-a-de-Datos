@@ -1,0 +1,145 @@
+-- 1
+CREATE DATABASE TiendaOnline;
+-- 2
+USE TiendaOnline;
+
+-- 3
+CREATE TABLE Producto(
+    codigoBarras INT(15) AUTO_INCREMENT PRIMARY KEY,
+    nombreProducto VARCHAR(15),
+    precioProducto FLOAT,
+    marca VARCHAR(20)
+);
+
+CREATE TABLE Usuario(
+    idUsuario INT(11) PRIMARY KEY,
+    nombreUsuario VARCHAR(15),
+    emailUsuario VARCHAR(15),
+    rol VARCHAR(15),
+    telefonoUsuario INT(11)
+);
+
+CREATE TABLE Cliente(
+    idCliente INT(11) AUTO_INCREMENT PRIMARY KEY,
+    nombreCliente VARCHAR(15),
+    fechaNacimiento DATE,
+    apellido VARCHAR(17)
+);
+
+CREATE TABLE Ventas(
+    idVentas INT(11) AUTO_INCREMENT PRIMARY KEY,
+    fechaVenta VARCHAR(15),
+    idClienteFK INT(11),
+    idUsuarioFK INT(11),
+    codigoBarrasFK INT,
+    numeroOrden INT NOT NULL
+);
+
+CREATE TABLE Ventas_Producto(
+    codigoBarrasFK INT(11),
+    idVentasFK INT(11),
+    precioProductoFK INT,
+    cantidad INT(11)
+);
+
+ALTER TABLE Ventas
+ADD CONSTRAINT FKClienteVenta
+FOREIGN KEY (idClienteFK)
+REFERENCES Cliente(idCliente);
+
+ALTER TABLE Ventas
+ADD CONSTRAINT FKUsuarioVenta
+FOREIGN KEY (idUsuarioFK)
+REFERENCES Usuario(idUsuario);
+
+ALTER TABLE Ventas_Producto
+ADD CONSTRAINT FKVentas_Producto_Producto
+FOREIGN KEY (codigoBarrasFK)
+REFERENCES Producto(codigoBarras);
+
+ALTER TABLE Ventas_Producto
+ADD CONSTRAINT FKVentas_Producto_Venta
+FOREIGN KEY (idVentasFK)
+REFERENCES Ventas(idVentas);
+
+-- Insertar valores iniciales
+INSERT INTO Cliente (idCliente, nombreCliente, fechaNacimiento) 
+VALUES (1, 'Maria', '2008-12-19'), 
+       (2, 'Sandra', '1979-04-24'), 
+       (3, 'Omar', '1980-06-27'), 
+       (4, 'Daniel', '2001-02-09');
+
+INSERT INTO Usuario (idUsuario, nombreUsuario, emailUsuario, rol, telefonoUsuario)
+VALUES (1, 'Maria', 'Maria.1@gmail.com', 'Empleado', 1234),
+       (2, 'Sandra', 'Sandra@hotmail.com', 'Empleado', 9876), 
+       (3, 'Nikolas', 'nikolas@yahoo.com', 'Provedor', 7654), 
+       (4, 'Omar', 'Omar@gmail.com', 'Provedor', 5489);
+
+INSERT INTO Producto (codigoBarras, nombreProducto, precioProducto, marca)
+VALUES (112, 'AlegriaJean', 42.000, 'Levis'),
+       (113, 'ChaquetaDanna', 14.300, 'Zara'),
+       (114, 'MallaJon', 31.000, 'Nike'),
+       (115, 'RelojDan', 230.000, 'Rolex'),
+       (116, 'BodyBaby', 20000, 'Adidas');
+
+INSERT INTO Ventas (idVentas, fechaVenta, idClienteFK, idUsuarioFK, codigoBarrasFK, numeroOrden)
+VALUES (1, '03', 4, 2, 112, 45528536),
+       (2, '05', 4, 4, 113, 45528537),
+       (3, '07', 3, 1, 114, 45528538),
+       (4, '03', 2, 3, 115, 45528539),
+       (5, '27', 5, 5, 116, 20240927);
+
+INSERT INTO Ventas_Producto (codigoBarrasFK, idVentasFK, precioProductoFK, cantidad)
+VALUES (112, 3, 42.000, 2),
+       (113, 2, 14.300, 3),
+       (114, 1, 31.000, 1),
+       (115, 2, 230.000, 4);
+
+-- Crear procedimientos
+
+-- Procedimiento para inactivar un cliente
+DELIMITER //
+CREATE PROCEDURE inactivar_cliente(IN idClienteInactivo INT)
+BEGIN
+    DELETE FROM Cliente WHERE idCliente = idClienteInactivo;
+END//
+DELIMITER ;
+
+-- Procedimiento para consultar los productos que ha comprado un cliente
+DELIMITER //
+CREATE PROCEDURE productos_comprados(IN clienteID INT)
+BEGIN
+    SELECT P.nombreProducto, VP.cantidad 
+    FROM Producto P
+    INNER JOIN Ventas_Producto VP ON P.codigoBarras = VP.codigoBarrasFK
+    INNER JOIN Ventas V ON VP.idVentasFK = V.idVentas
+    WHERE V.idClienteFK = clienteID;
+END//
+DELIMITER ;
+
+-- Procedimiento para modificar la fecha de nacimiento de un cliente
+DELIMITER //
+CREATE PROCEDURE modificar_fecha_nacimiento(IN clienteID INT, IN nuevaFecha DATE)
+BEGIN
+    UPDATE Cliente SET fechaNacimiento = nuevaFecha WHERE idCliente = clienteID;
+END//
+DELIMITER ;
+
+-- Crear vistas
+
+-- Vista para consultar qué cliente compró un producto y su número de orden
+CREATE VIEW Cliente_Producto_Orden AS
+SELECT C.nombreCliente, P.nombreProducto, V.numeroOrden
+FROM Cliente C
+INNER JOIN Ventas V ON C.idCliente = V.idClienteFK
+INNER JOIN Ventas_Producto VP ON V.idVentas = VP.idVentasFK
+INNER JOIN Producto P ON VP.codigoBarrasFK = P.codigoBarras;
+
+-- Vista para mostrar el cliente que ha realizado más compras
+CREATE VIEW Cliente_Mas_Compras AS
+SELECT C.nombreCliente, COUNT(V.idVentas) AS total_compras
+FROM Cliente C
+INNER JOIN Ventas V ON C.idCliente = V.idClienteFK
+GROUP BY C.idCliente
+ORDER BY total_compras DESC
+LIMIT 1;
