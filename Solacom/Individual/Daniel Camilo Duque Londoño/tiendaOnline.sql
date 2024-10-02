@@ -98,18 +98,24 @@ inner join Cliente on Cliente.idCliente = Ventas.idClienteFK
 inner join Ventas_Producto on Ventas.idVentas = Ventas_Producto.codigoBarrasFK;
 -- consultar usuario y cliente de una venta especifica
 
-SELECT V.idVentas, C.nombreCliente, U.nombreUsuario
-FROM Ventas V
-JOIN Cliente C ON V.idClienteFK = C.idCliente
-JOIN Producto P ON V.idUsuarioFK = P.nombreProducto;
+-- SELECT V.idVentas, C.nombreCliente, U.nombreUsuario
+-- FROM Ventas V
+-- JOIN Cliente C ON V.idClienteFK = C.idCliente
+-- JOIN Producto P ON V.idUsuarioFK = P.nombreProducto;
 -- consultar los productos que compró un cliente especifico
 -- consultar todos los clientes que han hecho ventas
+
 describe Ventas_Producto;
 select * from Usuario;
 select * from Ventas;
 select * from Cliente;
 select * from Ventas_Producto;
 select * from Producto;
+
+insert into Cliente values(5, 'Tatiana', 2000-06-06);
+insert into Producto values(116, 'pañales',20000);
+insert into Usuario values(5,'Daniel', 'daniel@gmail.com','empleado',9564);
+insert into Ventas values(5,'27', 5,5);
 
 alter table Cliente
 add column apellido varchar(17);
@@ -120,10 +126,6 @@ add column codigoBarrasFK int;
 alter table Ventas
 add column numeroOrden int not null;
 
-insert into Cliente values(5, 'Tatiana', 2000-06-06);
-insert into Producto values(116, 'pañales',20000);
-insert into Usuario values(5,'Daniel', 'daniel@gmail.com','empleado',9564);
-insert into Ventas values(5,'27', 5,5);
 describe Cliente;
 update Ventas set codigoBarrasFK = 116 where idClienteFK = 5;
 update Cliente set  apellido = 'Cabrera Vargas', fechaNacimiento = '1985-11-24' where idCliente = 5;
@@ -149,17 +151,90 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE updateProducto(codigo_Barras int, nombre_Producto varchar(15),precio_Producto float)
 BEGIN
-update Producto set codigoBarras = codigo_barras where nombre_Producto = nombre_Producto or set nombreProducto = nombre_producto where codigo_Barras = codigo_Barras or set precioProducto = precio_Producto where  ;
+update Producto set nombreProducto = nombre_Producto where codigoBarras = codigo_Barras;
 END//
 DELIMITER ;
 call registrarProducto(52635,'Cable de carga',55.000);
 call updateProducto(52635,'Cargador',55.000);
-DROP procedure registrar_Clientes;
-Drop procedure updateProducto;
 
 CREATE VIEW ConsultarCliente as select nombreCliente from Cliente;
 
 select * from consultarCliente;
 
 -- crear tres procedimientos para inactivar un cliente, consultar los productos que ha comprado un cliente, modificar la fecha de nacimiento de un cliente
+use tiendaOnline;
+alter table Cliente
+add column estadoCliente varchar(25);
+DELIMITER //
+CREATE PROCEDURE InactivarCliente(id_Cliente int)
+BEGIN 
+update Cliente set estadoCliente = 'Inactivo' where idCliente = id_Cliente;
+END//
+DELIMITER ;
+describe Cliente;
+DELIMITER //
+CREATE PROCEDURE Update_fecha_nacimiento(id_Cliente int, fecha date)
+BEGIN
+update Cliente set fechaNacimiento = fecha where idCliente = id_Cliente;
+END //
+DELIMITER ;
+
+select * from ventas_producto;
+select * from ventas;
+select * from producto;
+DELIMITER //
+CREATE PROCEDURE ProductoComprado(id_Cliente int)
+BEGIN
+select c.idCliente, v.codigoBarrasFK, p.nombreProducto,v.fechaVenta from cliente c
+join ventas v on c.idCliente = v.idClienteFK
+join Producto p on v.codigoBarrasFK = p.codigoBarras
+where c.idCliente = id_Cliente;
+END //
+DELIMITER ;
+drop procedure ProductoComprado;
 -- crear dos vistas que consulte que cliente compró un producto y cual fue su número de orden, una vista que muestre el cliente que mas compras haya hecho 
+CREATE view cliente_Producto as 
+select P.nombreProducto, V.numeroOrden, c.nombreCliente from Cliente c
+join ventas v on c.idCliente = v.idClienteFK
+join Producto p on v.codigoBarrasFK = p.codigoBarras;
+
+-- CREATE VIEW Mayor_Comprador as
+-- select 
+
+DELIMITER //
+CREATE PROCEDURE registrarCliente(idCliente int, nombreCliente varchar(15),fechaNacimiento date, apellido varchar(25),estadoCliente varchar(25))
+BEGIN
+insert into Cliente values(idCliente,nombreCliente,fechaNacimiento,apellido,estadoCliente);
+END//
+DELIMITER ;
+
+select * from Cliente;
+call registrarCliente(233232,'Leonardo','1985-04-12','castro','activo');
+call registrarCliente(256984,'Alejandro','1999-04-04','Londoño','activo');
+call registrarCliente(583146,'Julian','1999-05-05','Herrera','activo');
+call registrarCliente(874156,'Joseph','1975-08-12','Lozano','activo');
+call registrarCliente(741369,'Paula','2002-07-09','Moreno','activo');
+call registrarCliente(707077,'Camila','2004-12','De los Rios','activo');
+
+select * from Usuario;
+select * from Producto;
+select * from Ventas;
+select * from Cliente;
+call update_fecha_nacimiento(707077,'2004-09-07');
+insert into Ventas values('','2024-01-10',741369,1,113,5986),('','2024-08-21',874156,5,114,5987),('','2024-09-09',583146,2,112,5988),
+('','2024-09-15',583146,2,114,5989),('','2024-01-10',741369,1,115,5990),('','2024-01-10',741369,1,116,5990),('','2023-01-10',256984,5,114,5991),
+('','2023-01-10',256984,5,114,5991),('','2023-01-10',256984,5,114,5991),('','2023-01-10',256984,5,114,5991),('','2023-01-10',256984,5,114,5991),
+('','2023-01-10',256984,5,114,5991),('','2023-01-10',256984,5,112,5991),('','2024-07-09',707077,1,115,5992),('','2024-01-10',707077,2,115,5993),
+('','2024-01-12',707077,2,115,5994),('','2024-01-12',707077,2,115,5994),('','2024-01-12',707077,2,115,5994),('','2024-01-12',707077,2,115,5994),
+('','2024-01-12',707077,2,115,5994),('','2024-01-12',707077,2,115,5994),('','2024-01-12',707077,2,115,5994),('','2024-01-12',707077,2,115,5994);
+
+call ProductoComprado(707077);
+call ProductoComprado(741369);
+call ProductoComprado(874156);
+call ProductoComprado(583146);
+call ProductoComprado(256984);
+call ProductoComprado(233232);
+
+call InactivarCliente(233232);
+select * from cliente_Producto;
+select * from cliente_producto where nombreCliente = 'Camila';
