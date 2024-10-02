@@ -87,7 +87,7 @@ VALUES (1, '03', 4, 2, 112, 45528536),
        (2, '05', 4, 4, 113, 45528537),
        (3, '07', 3, 1, 114, 45528538),
        (4, '03', 2, 3, 115, 45528539),
-       (5, '27', 5, 5, 116, 20240927);
+       (5, '27', 1, 1, 116, 20240927);
 
 INSERT INTO Ventas_Producto (codigoBarrasFK, idVentasFK, precioProductoFK, cantidad)
 VALUES (112, 3, 42.000, 2),
@@ -143,3 +143,31 @@ INNER JOIN Ventas V ON C.idCliente = V.idClienteFK
 GROUP BY C.idCliente
 ORDER BY total_compras DESC
 LIMIT 1;
+
+-- Clase 2 de octubre
+-- manipulacion es delete , default (estado dentro de la tabla cliente true or false boolean) 
+-- si se quiere hacer una consulta temporal se usa una vista 
+-- si se quiere hacer un procedimiento recurrente crear uno e invocarlo 
+-- si se quieren hacer tipo de consultas que estan tercerizadas se crean vistas (para conectarse a base de datos no propias) no se altera la base de ddatos original 
+-- tener en cuenta donde se almacena la base de datos 
+-- Las consultas son subconsultas (anidadas) dentro de otra consulta 
+-- anido una consulta de estudiantes para ver la informacion de estudiantes 
+
+
+-- calcular los productos que se vendan a un precio > del promedio de todos los productos 
+select nombreEmpleado,idEmpleado ,salario,(select avg(salario)
+from empleado) as promedio
+from empleado;
+-- mostrar los clientes que el total de compra sea mayor al promedio de compras de la tienda 
+select nombreEmpleado,idEmpleado ,salario,(select avg(salario)
+from empleado) as promedio
+from empleado;
+-- mostrar el promedio de precios de productos comprados por un cliente 
+select nombreEmpleado,idEmpleado ,salario,(select avg(salario)
+from empleado) as promedio
+from empleado;
+
+
+
+
+
