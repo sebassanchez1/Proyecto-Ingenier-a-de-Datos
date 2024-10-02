@@ -238,3 +238,23 @@ call ProductoComprado(233232);
 call InactivarCliente(233232);
 select * from cliente_Producto;
 select * from cliente_producto where nombreCliente = 'Camila';
+
+/* sub conslutas:son consultas anidadas dentro de otra consulta
+select campo2,campo3, from tablanegra
+where columna2 = (select 2x from otratabla where condicion);
+*/
+
+/* consultar los datos de los empleados y su sueldo promedio*/
+select idEmpleado, nombreEmpleado,Salario, (select avg(salario) from empleado as promedio) from empleado;
+ /* consultar el empleado que tenga un salario mayor que el salario promedio*/
+ select idEmpleado,nombreEmpleado,Salario from empleado where salario > (select avg(salario) from empleado);
+ /*consultar a que area pertence un empleado*/
+ select idEmpleado, nombreEmpleado, idArea, nombreArea from empleado where idArea in (select idArea from area where nombreEmpleado = 'juan');
+ 
+ /*
+ 1. calcular los productos que se vendan a un precio mayor del promedio de todos los productos
+ 2. mostrar los clientes que el total de compra sea mayor al promedio de compras de la tienda
+ 3. mostrar el promedio de precios de productos comprados por cliente
+ */
+ 
+ 
