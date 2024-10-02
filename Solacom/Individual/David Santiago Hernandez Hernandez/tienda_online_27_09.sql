@@ -169,3 +169,81 @@ SELECT * FROM Cliente;
 
 
 
+-- Crear procedimientos
+
+-- Procedimiento para inactivar un cliente
+DELIMITER //
+CREATE PROCEDURE inactivar_cliente(IN idClienteInactivo INT)
+BEGIN
+    DELETE FROM Cliente WHERE idCliente = idClienteInactivo;
+END//
+DELIMITER ;
+
+-- Procedimiento para consultar los productos que ha comprado un cliente
+DELIMITER //
+CREATE PROCEDURE productos_comprados(IN clienteID INT)
+BEGIN
+    SELECT P.nombreProducto, VP.cantidad 
+    FROM Producto P
+    INNER JOIN Ventas_Producto VP ON P.codigoBarras = VP.codigoBarrasFK
+    INNER JOIN Ventas V ON VP.idVentasFK = V.idVentas
+    WHERE V.idClienteFK = clienteID;
+END//
+DELIMITER ;
+
+-- Procedimiento para modificar la fecha de nacimiento de un cliente
+DELIMITER //
+CREATE PROCEDURE modificar_fecha_nacimiento(IN clienteID INT, IN nuevaFecha DATE)
+BEGIN
+    UPDATE Cliente SET fechaNacimiento = nuevaFecha WHERE idCliente = clienteID;
+END//
+DELIMITER ;
+
+-- Crear vistas
+
+-- Vista para consultar qué cliente compró un producto y su número de orden
+CREATE VIEW Cliente_Producto_Orden AS
+SELECT C.nombreCliente, P.nombreProducto, V.numeroOrden
+FROM Cliente C
+INNER JOIN Ventas V ON C.idCliente = V.idClienteFK
+INNER JOIN Ventas_Producto VP ON V.idVentas = VP.idVentasFK
+INNER JOIN Producto P ON VP.codigoBarrasFK = P.codigoBarras;
+
+-- Vista para mostrar el cliente que ha realizado más compras
+CREATE VIEW Cliente_Mas_Compras AS
+SELECT C.nombreCliente, COUNT(V.idVentas) AS total_compras
+FROM Cliente C
+INNER JOIN Ventas V ON C.idCliente = V.idClienteFK
+GROUP BY C.idCliente
+ORDER BY total_compras DESC
+LIMIT 1;
+
+
+
+
+/* Sub Consultas:son consultas anidadas dentro de otra consulta  
+select campo2, campo3 from tabla_negra where columna2=(select columna 2x from otratabla where condicion);
+
+*/
+
+
+-- consultar los datos de lo empleados y su sueldo promedio 
+
+select id_empleado ,nombre_empleado, salario, (select avg(salario) from empleado as promedio) from empleado;
+
+-- consultar los datos de lo empleados y su sueldo promedio Y EL QUE TENGA MAYOR SALARIO A PROMEDIO
+
+select id_empleado ,nombre_empleado, salario from empleado where salario >  (select avg(salario) from empleado);
+
+-- empleados pertenencen a un area y quieren consultar a que area pertenece un empleado 
+
+select id_empleado, nombre_empleado, id_area, nombre_area from empleado where id_area in (select id_area from area where nombre_empleado='David');
+
+-- calcular los productos que se vendan a un precio mayor del promedio de todos los productos
+-- Mostar los clientes que el total de compra sea mayor al promedio de compras de la tienda 
+-- mostrar el promedio de precios de productos comprados por un cliente 
+
+
+
+
+
