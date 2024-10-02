@@ -1,0 +1,42 @@
+/* select campo2,campo3 from  tablanegra
+where  columna2=(select columna 2x from otratabla where condicion;
+*/
+
+/*Consultar los datos de los empleados y su sueldo promedio*/
+select nombreEmpleado,idEmpleado ,salario,(select avg(salario)
+from empleado) as promedio
+from empleado;
+/* al empelado co un salario mayor al salario promedio 
+Select nombreEmpleado,idEmpleado ,salario,SELECT MAX(Price) AS LargestPrice FROM Products; */
+
+/* Consultar el area a la que pertenece un empleado */
+select idEmpleado,nombreEmpleado,idArea,nombreArea
+from empleado
+where idArea in (select idArea from area where nombreEmpleado='Vale')
+
+
+/*Una SELECT anidada es una consulta dentro de otra consulta, es decir, una consulta SELECT dentro de la SELECT principal.
+ un ejemplo:
+ La base de datos incluye tres tablas, students, teachers y classes
+ SELECT *
+FROM students
+WHERE GPA > (
+    SELECT AVG(GPA)
+    FROM students);*/
+    
+    
+    /* select campo2,campo3 from  tablanegra
+where  columna2=(select columna 2x from otratabla where condicion;
+*/
+
+/*Consultar los datos de los empleados y su sueldo promedio*/
+select nombreEmpleado,idEmpleado ,salario,(select avg(salario)
+from empleado) as promedio
+from empleado;
+/* al empelado co un salario mayor al salario promedio 
+Select nombreEmpleado,idEmpleado ,salario,SELECT MAX(Price) AS LargestPrice FROM Products; */
+
+/* Consultar el area a la que pertenece un empleado */
+select idEmpleado,nombreEmpleado,idArea,nombreArea
+from empleado
+where idArea in (select idArea from area where nombreEmpleado='Vale')
