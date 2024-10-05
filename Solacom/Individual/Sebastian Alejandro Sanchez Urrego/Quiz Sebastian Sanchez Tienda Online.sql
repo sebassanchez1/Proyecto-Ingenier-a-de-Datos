@@ -142,10 +142,58 @@ describe Producto;
 insert into Producto values('', '750123461324', 'Pañales', 24000);
 select * from Producto;
 
+/* Procedimientos almacenados -> Subrutinas almacenar la información en la base de datos
+Estructura
+DELIMITER //
+CREATE PROCEDURE nombre_procedimeinto(parametros)
+BEGIN
+--LÓGICA SENTENCIA QUE SE QUIERA UTILIZAR
+END//
 
+DELIMITER;
+*/
 
+use tiendaonline;
+describe producto;
+Delimiter // 
+create procedure registrarproductos(idProducto int(15), codigoBarras varchar(30), nombreProducto varchar(30), precioProducto int(30))
+BEGIN
+insert into Producto values(idProducto, codigoBarras, nombreProducto, precioProducto);
+END //
+Delimiter ; 
 
+call registrarproductos('', '7501031334893', 'fanta', 19000);
+select * from Producto;
 
+/* Consultas 
+Se usa cuando consultas multitabla o consultas muy grnades en espacio */ 
+create view consultar_cliente as 
+select * from cliente; 
 
+select * from consultar_cliente;
 
+/* Sub consultas: Son consultas anidadas dentro de otra consulta 
+select campo2, campo3 from tablanegra
+where columna2=(select columna2x from otratablal where condición);
+
+*/
+
+/* Consultar los datos de los empleados y su sueldo promedio */
+select idEmpleado, nombreEmpleado, salario, (select avg(salario) from Empleado) as Promedio from Empleado; 
+use tiendaonline;
+
+/* Consultar el empleado que tenga el salario mayor que el salario promedio */
+select idEmpleado, nombreEmpleado, salario from empleado where salario>(select avg(salario) from Empleado); 
+
+/* Consultar a que área pertenece un empleado*/ 
+select idEmpleado, nombreEmpleado, idArea, nombreArea
+from Empleado 
+where idArea in (select idArea from area where nombreEmpleado='Juan');
+
+/* Consultar de tiendaonline, calcular los productos que se vendan a un precio mayor del promedio de todos los productos*/
+select* from Producto;
+select idProducto, nombreProducto, precioProducto from pro
+/* Mostrar los clientes que el total de compra sea mayor al promedio de compras de la tienda */
+
+/* Mostrar el promedio de precios de productos comprados por un cliente*/
 
